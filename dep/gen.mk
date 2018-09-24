@@ -1,10 +1,14 @@
 include $(LIB_CFG)
 
-SRC_DIR=$(WORKING_DIR)/srcs
 OBJ_DIR=$(WORKING_DIR)/objs
 INCLUDE_DIR=$(WORKING_DIR)/includes
+ifneq ($(wildcard $(SRC_DIR)), )
+	SRCS=$(shell find $(wildcard $(SRC_DIR)) -type f)
+else
+	SRCS=
+endif
 
-SRCS=$(shell find '$(SRC_DIR)' -type f)
+
 OBJS:=$(foreach obj,$(notdir $(SRCS)),$(addprefix $(OBJ_DIR)/,$(addsuffix .o,$(obj))))
 
 $(NAME): $(LIB_CFG)
@@ -24,7 +28,7 @@ $(NAME): $(LIB_CFG)
 
 $(OBJS): $(OBJ_DIR)
 	@echo "Creating: $@"
-	@gcc $(shell find $(SRC_DIR) -type f -name $(notdir $*)) -o $@ $(INCLUDE) -I $(INCLUDE_DIR) -c -Wextra -Wall -Werror
+	@gcc $(shell find $(SRC_DIR) $(OS_D) -type f -name $(notdir $*)) -o $@ $(INCLUDE) -I $(INCLUDE_DIR) -c #-Wextra -Wall -Werror
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
